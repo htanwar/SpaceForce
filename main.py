@@ -6,6 +6,7 @@ import sys
 import math
 import random
 from src import player
+from src import main_menu
 
 def main():
     # Initialize Game
@@ -27,6 +28,9 @@ def main():
 
     player1 = player.player_()
 
+    mainMenu = main_menu.mainMenu()
+    mainMenu.tutorial(win)
+    
     while playing:
         clock.tick(FPS)
         for event in pygame.event.get():
