@@ -15,6 +15,9 @@ def main():
     pygame.display.set_caption("Space Force")
     win.fill((0,0,0))
 
+    SINK_SPEED = 0.18
+    CLIMB_SPEED = 0.3
+    CLIMB_DURATION = 333.3
 
     #Initialize variables
     playing = True
@@ -29,12 +32,14 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 playing = False
-        
-        player.background_(img_x, win)
-        player1.update_display(win)
+            elif (event.type == pygame.KEYUP and event.key == pygame.K_SPACE):
+                player1.msec_to_climb = CLIMB_DURATION
 
-        
+        player.background_(img_x, win)
+        player1.update_display(win, CLIMB_DURATION, CLIMB_SPEED, SINK_SPEED)
+
+
         img_x -= 5
         pygame.display.update()
-        
+
 main()
