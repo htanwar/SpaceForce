@@ -8,7 +8,7 @@ import os
 #os.chdir("..")
 #print(os.path.abspath(os.curdir))
 pygame.init()
-background = pygame.image.load("images/background/temp_back.jpg")
+background = pygame.image.load("images/background/main_back.png")
 background = pygame.transform.scale(background,(1280,720))
 
 def background_(img_x, win):
@@ -20,11 +20,16 @@ def background_(img_x, win):
 
 class player_(object):
     def __init__(self):
-        self.x = 300
-        self.y = 400
-        self.height = 120
-        self.width = 100
+        self.x = 150
+        self.y = 360
+        self.height = 125
+        self.width = 125
+        self.jumping = False
         self.image = pygame.transform.scale(pygame.image.load("images/character/player1.png"), (self.width, self.height))
+        self.animation = []
     
     def update_display(self, win):
         win.blit(self.image, (self.x, self.y))
+    
+    def jumpAnimation(self, win):
+        print()
