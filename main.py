@@ -28,7 +28,7 @@ def main():
     img_x = 0
 
     score = 0
-
+    scoreCheck = True
     player1 = player.player_()
 
     mainMenu = main_menu.mainMenu()
@@ -48,24 +48,34 @@ def main():
         player1.update_display(win, CLIMB_DURATION, CLIMB_SPEED, SINK_SPEED)
         #pygame.draw.rect(win, (255,0,0), (player1.x, player1.y, player1.width, player1.height ),2)
         #pygame.draw.circle(win, (255,0,0), (int(player1.x) + 63, int(player1.y)+63), 63, 0) 
+        
         for r in allObstacles:
             if r.x1 < -300:
                 r.x1 = 1500
                 r.x2 = 1500
                 r.randomize_size()
+                scoreCheck = True
+            if r.x1 < player1.x and scoreCheck == True:
                 score += 1
+                scoreCheck = False
             r.display_object(win)
+            #pygame.draw.rect(win, (255,0,0), (r.x1, r.y1, r.width, r.height ),2)
             #pygame.draw.circle(win, (255,0,0), (r.x1+r.height//2, r.y1+r.height//2),r.height//2,0)
             #pygame.draw.circle(win, (255,0,0), (r.x2+r.height//2, r.y2+r.height//2),r.height//2,0)  
         mainMenu.score(win, score)
-        if checkCollisions(player1, allObstacles):
-            mainMenu.game_over(win)
 
         img_x -= 5
         pygame.display.update()
 
+        if checkCollisions(player1, allObstacles):
+            mainMenu.game_over(win)
+
 
 def createObstacles():
+    '''
+    Creates initial list of obstacles
+
+    '''
     rocks = obstacles.obstacles()
 
     rock2 = obstacles.obstacles()
@@ -81,10 +91,14 @@ def createObstacles():
     return [rocks, rock2, rock3]
 
 def checkCollisions(player, rocks):
+    '''
+    Checks if either of the obstacles collided with the player
+
+    '''
     for r in rocks:
-        dist1 = math.hypot(player.x - r.x1, player.y - r.y1 )
-        dist2 = math.hypot(player.x - r.x2, player.y - r.y2 )
-        if (dist1 <= player.width // 2 + r.width // 2) or (dist2 <= player.width // 2 + r.width // 2):
+        dist1 = math.hypot( (int(player.x) + 63) - (r.x1 + r.width //2) , (int(player.y) + 63) - (r.y1 + r.width //2) )
+        dist2 = math.hypot( (int(player.x) + 63) - (r.x2 + r.width //2), (int(player.y) + 63) - (r.y2 + r.width //2 ) )
+        if (dist1 <= player.width // 2 + ((r.width - 10) // 2)) or (dist2 <= player.width // 2 + ((r.width - 10) // 2)):
             return True
     return False
 
