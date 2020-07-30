@@ -15,27 +15,41 @@ class obstacles(object):
         self.y2 = 520
         self.width = 200
         self.height = 200
-        self.rock1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png"), (self.width, self.height))
-        self.rock2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png"), (self.width, self.height))
-        self.orig1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png"), (self.width, self.height))
-        self.orig2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png"), (self.width, self.height))
-        self.coordinates = (self.x1, self.x2, self.width, self.height)
+        self.rock1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.rock2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
 
     def display_object(self, win):
+        '''
+        Displays the object on the scree
+        '''
+
         self.x1 -= 5
         self.x2 -= 5
         win.blit(self.rock1, (self.x1, self.y1))
         win.blit(self.rock2, (self.x2, self.y2))
 
     def randomize_size(self):
+        '''
+        Randomizes the obstacle, with size and positioning
+        '''
+
         f  = random.randint(0, 90)
         s = random.randint(0, 90)
-        sizeR = random.randint(200, 400)
+        sizeR = random.randint(200, 300)
+        randY = random.randint(0,1)
+        randY1 = random.randint(10, 50)
+        if randY == 1:
+            self.y2 -= randY1
+        else:
+            self.y1 += randY1
+        
         self.width = sizeR
         self.height = sizeR
-        #self.rock1 = pygame.transform.rotate(pygame.transform.scale(self.orig1, (sizeR, sizeR)), f)
-        #self.rock2 = pygame.transform.rotate(pygame.transform.scale(self.orig2, (sizeR, sizeR)), s)
-        self.rock1 = pygame.transform.scale(self.orig1, (sizeR, sizeR))
-        self.rock2 = pygame.transform.scale(self.orig2, (sizeR, sizeR))
+        self.rock1 = pygame.transform.rotate(pygame.transform.scale(self.orig1, (sizeR, sizeR)), f)
+        self.rock2 = pygame.transform.rotate(pygame.transform.scale(self.orig2, (sizeR, sizeR)), s)
+        #self.rock1 = pygame.transform.scale(self.orig1, (sizeR, sizeR))
+        #self.rock2 = pygame.transform.scale(self.orig2, (sizeR, sizeR))
     
 

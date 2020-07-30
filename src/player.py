@@ -26,10 +26,14 @@ class player_(object):
         self.height = 125
         self.width = 125
         self.msec_to_climb = 2
-        self.image = pygame.transform.scale(pygame.image.load("images/character/player1.png"), (self.width, self.height))
+        self.image = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (self.width, self.height))
+        self.mask = pygame.mask.from_surface(pygame.image.load("images/character/player1.png").convert_alpha())
         self.animation = []
 
     def update_display(self, win, climb_duration, climb_speed, sink_speed, frames = 1.0):
+        '''
+        Display the character and includes jumping mechanic
+        '''
         if self.msec_to_climb > 0:
             frac_climb = 1 - self.msec_to_climb / climb_duration
             self.y -= (climb_speed * self.frames_to_msec(frames) * (1 - math.cos(frac_climb * math.pi)))
