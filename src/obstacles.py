@@ -29,6 +29,13 @@ class obstacles(object):
         self.x2 -= 5
         win.blit(self.rock1, (self.x1, self.y1))
         win.blit(self.rock2, (self.x2, self.y2))
+    
+    def display_object2(self, win):
+        '''
+        Displays the object on the screen without shifting x
+        '''
+        win.blit(self.rock1, (self.x1, self.y1))
+        win.blit(self.rock2, (self.x2, self.y2))
 
     def randomize_size(self):
         '''

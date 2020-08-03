@@ -28,7 +28,9 @@ class player_(object):
         self.msec_to_climb = 2
         self.image = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (self.width, self.height))
         self.mask = pygame.mask.from_surface(pygame.image.load("images/character/player1.png").convert_alpha())
-        self.animation = []
+        self.animation = [pygame.image.load("images/animation/f1.png"),pygame.image.load("images/animation/f2.png"), pygame.image.load("images/animation/f3.png"), pygame.image.load("images/animation/f4.png"),
+                        pygame.image.load("images/animation/f5.png"),pygame.image.load("images/animation/f6.png"),pygame.image.load("images/animation/f7.png"),pygame.image.load("images/animation/f8.png"),
+                        pygame.image.load("images/animation/f9.png")]
 
     def update_display(self, win, climb_duration, climb_speed, sink_speed, frames = 1.0):
         '''
@@ -58,3 +60,7 @@ class player_(object):
         fps: The framerate to use for conversion.  Default: FPS.
         """
         return fps * milliseconds / 1000.0
+
+    def explosion_fx(self, win, backg, img_x, i):
+        self.image = pygame.transform.scale(self.animation[i], (210,210) )
+        win.blit(self.image, (self.x,self.y))
