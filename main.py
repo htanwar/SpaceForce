@@ -22,7 +22,8 @@ def main():
     CLIMB_DURATION = 333.3
 
     #Initialize variables
-    playing = True
+    playing = False
+    inmenu = True
     FPS = 60
     clock = pygame.time.Clock()
     img_x = 0
@@ -32,9 +33,58 @@ def main():
     player1 = player.player_()
 
     mainMenu = main_menu.mainMenu()
-    mainMenu.tutorial(win)
 
     allObstacles = createObstacles()
+    
+    start_area = pygame.Rect(50,355, 180, 75)
+    settings_area = pygame.Rect(50,435, 180, 75)
+    quit_area = pygame.Rect(50,515, 180, 75)
+    
+    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
+    logo = pygame.image.load("images/background/spaceForceLogo.png").convert_alpha()
+    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load("images/ui/GreenBtn1.png").convert_alpha()
+    
+    start_ = fontPlayScreen.render("Start", True, (255,255,255))
+    settings_ = fontPlayScreen.render("Options", True, (255,255,255))
+    quit_game_ = fontPlayScreen.render("Exit", True, (255,255,255))
+
+    
+    click = False
+
+    while inmenu:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN :
+                if event.button == 1:
+                    click = True
+        win.fill((0,0,0))
+        
+        win.blit(bkg, (0,0))
+        win.blit(logo, (-20, 50))
+        win.blit(button_sprite, (50,355))
+        win.blit(start_, (60, 360))
+        win.blit(button_sprite, (50,435))
+        win.blit(settings_, (60, 440))
+        win.blit(button_sprite, (50,515))
+        win.blit(quit_game_, (60, 520))
+        pygame.display.update()
+        
+        mx, my = pygame.mouse.get_pos()
+        if start_area.collidepoint((mx,my)) and click:
+            mainMenu.tutorial(win)
+            inmenu = False
+            playing = True
+        elif settings_area.collidepoint((mx,my)) and click:
+            settings(win,clock)
+        elif quit_area.collidepoint((mx,my)) and click:
+            pygame.quit()
+            sys.exit()
+        click = False
+        
 
     while playing:
         clock.tick(FPS)
@@ -70,6 +120,44 @@ def main():
         if checkCollisions(player1, allObstacles):
             mainMenu.game_over(win)
 
+def settings(win,clock):
+    running = True
+    
+    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
+    
+    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load("images/ui/GreenBtn1.png").convert_alpha()
+    start_ = fontPlayScreen.render("Options", True, (255,255,255))
+    back_ = fontPlayScreen.render("Back", True, (255,255,255))
+    
+    back_area = pygame.Rect(50,600, 180, 75)
+    
+    click = False
+    
+    while running:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN :
+                if event.button == 1:
+                    click = True
+
+        win.fill((0,0,0))
+        win.blit(bkg, (0,0))
+        win.blit(start_, (60, 50))
+        win.blit(button_sprite, (50,600))
+        win.blit(back_, (60, 605))
+        
+        mx, my = pygame.mouse.get_pos()
+        if back_area.collidepoint((mx,my)) and click:
+            running = False
+        
+        click = False
+        
+        pygame.display.update()
+        clock.tick(60)
 
 def createObstacles():
     '''
