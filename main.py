@@ -5,6 +5,7 @@ import pygame
 import sys
 import math
 import random
+import time
 from src import player
 from src import main_menu
 from src import obstacles
@@ -27,6 +28,15 @@ def main():
     FPS = 60
     clock = pygame.time.Clock()
     img_x = 0
+
+    music = pygame.mixer.music.load("sound/song.mp3")
+    explosion_sound = pygame.mixer.Sound("sound/explosion.wav")
+    jump_sound = pygame.mixer.Sound("sound/jump.wav")
+    point_sound = pygame.mixer.Sound("sound/point.wav")
+
+    jump_sound.set_volume(0.40)
+    point_sound.set_volume(0.50)
+    explosion_sound.set_volume(0.50)
 
     score = 0
     scoreCheck = True
@@ -51,7 +61,8 @@ def main():
 
     
     click = False
-
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
     while inmenu:
 
         for event in pygame.event.get():
@@ -93,11 +104,10 @@ def main():
                 playing = False
             elif (event.type == pygame.KEYUP and event.key == pygame.K_SPACE):
                 player1.msec_to_climb = CLIMB_DURATION
+                jump_sound.play()
 
         player.background_(img_x, win)
         player1.update_display(win, CLIMB_DURATION, CLIMB_SPEED, SINK_SPEED)
-        #pygame.draw.rect(win, (255,0,0), (player1.x, player1.y, player1.width, player1.height ),2)
-        #pygame.draw.circle(win, (255,0,0), (int(player1.x) + 63, int(player1.y)+63), 63, 0) 
         
         for r in allObstacles:
             if r.x1 < -300:
@@ -107,17 +117,28 @@ def main():
                 scoreCheck = True
             if r.x1 < player1.x and scoreCheck == True:
                 score += 1
+                point_sound.play()
                 scoreCheck = False
             r.display_object(win)
-            #pygame.draw.rect(win, (255,0,0), (r.x1, r.y1, r.width, r.height ),2)
-            #pygame.draw.circle(win, (255,0,0), (r.x1+r.height//2, r.y1+r.height//2),r.height//2,0)
-            #pygame.draw.circle(win, (255,0,0), (r.x2+r.height//2, r.y2+r.height//2),r.height//2,0)  
         mainMenu.score(win, score)
 
         img_x -= 5
         pygame.display.update()
 
+        '''
+        Checks for collision and adds collision fx
+        '''
         if checkCollisions(player1, allObstacles):
+            c_ = 0
+            explosion_sound.play()
+            time.sleep(.100)
+            while (c_ < 40):
+                player.background_(img_x, win)
+                for r in allObstacles:
+                    r.display_object2(win)
+                player1.explosion_fx(win, player, img_x, c_//5)
+                pygame.display.update()
+                c_+=1
             mainMenu.game_over(win)
 
 def settings(win,clock):
