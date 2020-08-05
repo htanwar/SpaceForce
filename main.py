@@ -28,8 +28,7 @@ def main():
     playing = False
     inmenu = True
     FPS = 60
-    clock = pygame.time.Clock()
-    img_x = 0
+    mainMenu = main_menu.mainMenu()
 
     music = pygame.mixer.music.load("sound/song.mp3")
     explosion_sound = pygame.mixer.Sound("sound/explosion.wav")
@@ -41,16 +40,15 @@ def main():
     explosion_sound.set_volume(0.20)
 
     score = 0
-    scoreCheck = True
     player1 = player.player_()
-    mainMenu = main_menu.mainMenu()
-
-    allObstacles = createObstacles()
+    
     
     start_area = pygame.Rect(50,355, 180, 75)
     characters_area = pygame.Rect(50,435, 180, 75)
     settings_area = pygame.Rect(50,515, 180, 75)
     quit_area = pygame.Rect(50,595, 180, 75)
+    restart_area = pygame.Rect(50,515, 180, 75)
+    menu_area = pygame.Rect(50,595, 180, 75)
     
     fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
     logo = pygame.image.load("images/background/spaceForceLogo.png").convert_alpha()
@@ -61,92 +59,122 @@ def main():
     characters_ = fontPlayScreen.render("Characters", True, (255,255,255))
     settings_ = fontPlayScreen.render("Options", True, (255,255,255))
     quit_game_ = fontPlayScreen.render("Exit", True, (255,255,255))
+    restart_ = fontPlayScreen.render("Restart", True, (255,255,255))
+    menu_ = fontPlayScreen.render("Main Menu", True, (255,255,255))
 
     
     click = False
     pygame.mixer.music.set_volume(0.05)
-    pygame.mixer.music.play(-1)
-    while inmenu:
+    
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+    gaming = True
+
+    while gaming:
+
+        clock = pygame.time.Clock()
+        img_x = 0
+
+        pygame.mixer.music.play(-1)
+        
+
+        allObstacles = createObstacles()
+        scoreCheck = True
+        score = 0
+
+        while inmenu:
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN :
+                    if event.button == 1:
+                        click = True
+            win.fill((0,0,0))
+            
+            win.blit(bkg, (0,0))
+            win.blit(logo, (-20, 50))
+            win.blit(button_sprite, (50,355))
+            win.blit(start_, (60, 360))
+            win.blit(button_sprite, (50,435))
+            win.blit(characters_, (60, 440))
+            win.blit(button_sprite, (50,515))
+            win.blit(settings_, (60, 520))
+            win.blit(button_sprite, (50,595))
+            win.blit(quit_game_, (60, 600))
+            pygame.display.update()
+            
+            mx, my = pygame.mouse.get_pos()
+            if start_area.collidepoint((mx,my)) and click:
+                mainMenu.tutorial(win)
+                inmenu = False
+                playing = True
+            elif settings_area.collidepoint((mx,my)) and click:
+                settings(win,clock)
+            elif characters_area.collidepoint((mx,my)) and click:
+                character_select(win,clock,player1)
+            elif quit_area.collidepoint((mx,my)) and click:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN :
-                if event.button == 1:
-                    click = True
-        win.fill((0,0,0))
-        
-        win.blit(bkg, (0,0))
-        win.blit(logo, (-20, 50))
-        win.blit(button_sprite, (50,355))
-        win.blit(start_, (60, 360))
-        win.blit(button_sprite, (50,435))
-        win.blit(characters_, (60, 440))
-        win.blit(button_sprite, (50,515))
-        win.blit(settings_, (60, 520))
-        win.blit(button_sprite, (50,595))
-        win.blit(quit_game_, (60, 600))
-        pygame.display.update()
-        
-        mx, my = pygame.mouse.get_pos()
-        if start_area.collidepoint((mx,my)) and click:
-            mainMenu.tutorial(win)
-            inmenu = False
-            playing = True
-        elif settings_area.collidepoint((mx,my)) and click:
-            settings(win,clock)
-        elif characters_area.collidepoint((mx,my)) and click:
-            character_select(win,clock,player1)
-        elif quit_area.collidepoint((mx,my)) and click:
-            pygame.quit()
-            sys.exit()
-        click = False
-        
+            click = False
+            
 
-    while playing:
-        clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                playing = False
-            elif (event.type == pygame.KEYUP and event.key == pygame.K_SPACE):
-                player1.msec_to_climb = CLIMB_DURATION
-                jump_sound.play()
+        while playing:
+            clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    playing = False
+                    pygame.quit()
+                    sys.exit()
+                elif (event.type == pygame.KEYUP and event.key == pygame.K_SPACE):
+                    player1.msec_to_climb = CLIMB_DURATION
+                    jump_sound.play()
 
-        player.background_(img_x, win)
-        player1.update_display(win, CLIMB_DURATION, CLIMB_SPEED, SINK_SPEED)
-        
-        for r in allObstacles:
-            if r.x1 < -300:
-                r.x1 = 1500
-                r.x2 = 1500
-                r.randomize_size()
-                scoreCheck = True
-            if r.x1 < player1.x and scoreCheck == True:
-                score += 1
-                point_sound.play()
-                scoreCheck = False
-            r.display_object(win)
-        mainMenu.score(win, score)
+            player.background_(img_x, win)
+            player1.update_display(win, CLIMB_DURATION, CLIMB_SPEED, SINK_SPEED)
+            
+            for r in allObstacles:
+                if r.x1 < -300:
+                    r.x1 = 1500
+                    r.x2 = 1500
+                    r.randomize_size()
+                    scoreCheck = True
+                if r.x1 < player1.x and scoreCheck == True:
+                    score += 1
+                    point_sound.play()
+                    scoreCheck = False
+                r.display_object(win)
+            mainMenu.score(win, score)
 
-        img_x -= 5
-        pygame.display.update()
+            img_x -= 5
+            pygame.display.update()
 
-        '''
-        Checks for collision and adds collision fx
-        '''
-        if checkCollisions(player1, allObstacles):
-            c_ = 0
-            explosion_sound.play()
-            time.sleep(.100)
-            while (c_ < 40):
-                player.background_(img_x, win)
-                for r in allObstacles:
-                    r.display_object2(win)
-                player1.explosion_fx(win, player, img_x, c_//5)
-                pygame.display.update()
-                c_+=1
-            mainMenu.game_over(win)
+            '''
+            Checks for collision and adds collision fx
+            '''
+            if checkCollisions(player1, allObstacles):
+                c_ = 0
+                explosion_sound.play()
+                time.sleep(.100)
+                while (c_ < 40):
+                    player.background_(img_x, win)
+                    for r in allObstacles:
+                        r.display_object2(win)
+                    player1.explosion_fx(win, player, img_x, c_//5)
+                    pygame.display.update()
+                    c_+=1
+
+                win.blit(button_sprite, (50,515))
+                win.blit(restart_, (60, 520))
+                win.blit(button_sprite, (50,595))
+                win.blit(menu_, (60, 600))
+                mainMenu.score(win, score)
+                mainMenu.high_score(win)
+                results = mainMenu.game_over(win, restart_area, menu_area)
+                playing = results[0]
+                inmenu = results[1]
+                player1.player_restart()
+                break;
 
 def character_select(win,clock,player):
     running = True
@@ -202,11 +230,13 @@ def character_select(win,clock,player):
             selected1 = True
             selected2 = False
             player.image = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (player.width, player.height))
+            player.original = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (player.width, player.height))
             player.mask = pygame.mask.from_surface(pygame.image.load("images/character/player1.png").convert_alpha())
         elif area2.collidepoint((mx,my)) and click:            
             selected1 = False
             selected2 = True
             player.image = pygame.transform.scale(pygame.image.load("images/character/player2.png").convert_alpha(), (player.width, player.height))
+            player.original = pygame.transform.scale(pygame.image.load("images/character/player2.png").convert_alpha(), (player.width, player.height))
             player.mask = pygame.mask.from_surface(pygame.image.load("images/character/player2.png").convert_alpha())
         click = False
         
