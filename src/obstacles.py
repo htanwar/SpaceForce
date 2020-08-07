@@ -59,4 +59,11 @@ class obstacles(object):
         #self.rock1 = pygame.transform.scale(self.orig1, (sizeR, sizeR))
         #self.rock2 = pygame.transform.scale(self.orig2, (sizeR, sizeR))
     
+    def cb_mode(self):
+        self.rock1 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
+        self.rock2 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
+        self.orig1 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
+        self.orig2 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
+
+    
 

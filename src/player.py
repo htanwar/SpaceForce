@@ -73,3 +73,19 @@ class player_(object):
         self.width = 125
         self.msec_to_climb = 2
         self.image = self.original
+
+    def choose_character(self, color_blind, p1, p2):
+        if color_blind:
+            if p1:
+                self.image = pygame.transform.scale(pygame.image.load("images/character/cb_player1.png").convert_alpha(), (self.width, self.height))
+                self.original = pygame.transform.scale(pygame.image.load("images/character/cb_player1.png").convert_alpha(), (self.width, self.height))
+            elif p2:
+                self.image = pygame.transform.scale(pygame.image.load("images/character/cb_player2.png").convert_alpha(), (self.width, self.height))
+                self.original = pygame.transform.scale(pygame.image.load("images/character/cb_player2.png").convert_alpha(), (self.width, self.height))
+        else:
+            if p2:
+                self.image = pygame.transform.scale(pygame.image.load("images/character/player2.png").convert_alpha(), (self.width, self.height))
+                self.original = pygame.transform.scale(pygame.image.load("images/character/player2.png").convert_alpha(), (self.width, self.height))
+            else:
+                self.image = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (self.width, self.height))
+                self.original = pygame.transform.scale(pygame.image.load("images/character/player1.png").convert_alpha(), (self.width, self.height))
