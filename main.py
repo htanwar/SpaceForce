@@ -12,9 +12,11 @@ from src import obstacles
 selected_character = 1
 
 asdasd = 15
-base_image_dir = 'grayscaleImages'
+base_image_dir = 'images'
+grayscaleBool = False
 
 def main():
+    global base_image_dir, grayscaleBool
     # Initialize Game
     pygame.init()
     WIDTH, HEIGHT = 1280, 720
@@ -31,7 +33,7 @@ def main():
     inmenu = True
     color_blind = False
     FPS = 60
-    mainMenu = main_menu.mainMenu()
+    mainMenu = main_menu.mainMenu(True)
     p1 = True
     p2 = False
 
@@ -45,7 +47,7 @@ def main():
     point_sound = pygame.mixer.Sound("sound/point.wav")
 
     score = 0
-    player1 = player.player_()
+    player1 = player.player_(False)
 
     start_area = pygame.Rect(50, 355, 180, 75)
     characters_area = pygame.Rect(50, 435, 180, 75)
@@ -209,6 +211,16 @@ def main():
                 playing = results[0]
                 inmenu = results[1]
                 player1.player_restart()
+
+                # switch to grayscale
+                player1.grayscale()
+                grayscaleBool = True
+                base_image_dir = "grayscaleImages"
+                bkg = pygame.transform.scale(
+                    pygame.image.load(base_image_dir + "/background/main_back.png").convert_alpha(), (2713, 720))
+                button_sprite = pygame.transform.scale(
+                    pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(), (230, 80))
+
                 break
 
 
@@ -453,14 +465,14 @@ def createObstacles(color_blind):
     '''
     Creates initial list of obstacles
     '''
-    rocks = obstacles.obstacles()
+    rocks = obstacles.obstacles(grayscaleBool)
 
-    rock2 = obstacles.obstacles()
+    rock2 = obstacles.obstacles(grayscaleBool)
     rock2.x1 = 1920
     rock2.x2 = 1920
     rock2.randomize_size()
 
-    rock3 = obstacles.obstacles()
+    rock3 = obstacles.obstacles(grayscaleBool)
     rock3.x1 = 2560
     rock3.x2 = 2560
     rock3.randomize_size()

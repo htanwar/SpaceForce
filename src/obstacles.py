@@ -9,14 +9,17 @@ import os
 
 
 class obstacles(object):
-    def __init__(self):
+    def __init__(self, grayscaleBool):
+        if grayscaleBool:
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'
         self.x1 = 1280
         self.x2 = 1280
         self.y1 = -100
         self.y2 = 520
         self.width = 200
         self.height = 200
-        self.base_image_dir = 'grayscaleImages'
         self.rock1 = pygame.transform.scale(
             pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
         self.rock2 = pygame.transform.scale(
@@ -64,6 +67,12 @@ class obstacles(object):
         self.rock2 = pygame.transform.rotate(pygame.transform.scale(self.orig2, (sizeR, sizeR)), s)
         # self.rock1 = pygame.transform.scale(self.orig1, (sizeR, sizeR))
         # self.rock2 = pygame.transform.scale(self.orig2, (sizeR, sizeR))
+
+    def grayscale(self):
+        if self.base_image_dir == 'images':
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'
 
     def cb_mode(self):
         self.rock1 = pygame.transform.scale(

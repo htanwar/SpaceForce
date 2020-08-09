@@ -8,8 +8,11 @@ import sys
 
 
 class mainMenu(object):
-    def __init__(self):
-        self.base_image_dir = 'grayscaleImages'
+    def __init__(self, grayscaleBool):
+        if grayscaleBool:
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'
         self.logo = pygame.image.load(self.base_image_dir + "/background/spaceForceLogo.png").convert_alpha()
         self.bkg = pygame.transform.scale(pygame.image.load(self.base_image_dir + "/background/main_back.png").convert_alpha(),
                                           (2713, 720))
@@ -79,3 +82,9 @@ class mainMenu(object):
         self.fontPlayScreen = pygame.font.Font("fonts/ALBAS.ttf", 20 * scale)
         continue_ = self.fontPlayScreen.render("High Score: " + str(self.highScore), True, (255, 255, 255))
         win.blit(continue_, (510, 450))
+
+    def grayscale(self):
+        if self.base_image_dir == 'images':
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'

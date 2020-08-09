@@ -9,7 +9,7 @@ import os
 # os.chdir("..")
 # print(os.path.abspath(os.curdir))
 pygame.init()
-base_image_dir = "grayscaleImages"
+base_image_dir = "images"
 background = pygame.image.load(base_image_dir + "/background/main_back.png")
 background = pygame.transform.scale(background, (1280, 720))
 
@@ -22,13 +22,16 @@ def background_(img_x, win):
 
 
 class player_(object):
-    def __init__(self):
+    def __init__(self, grayscaleBool):
+        if grayscaleBool:
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'
         self.x = 150
         self.y = 360
         self.height = 125
         self.width = 125
         self.msec_to_climb = 2
-        self.base_image_dir = 'grayscaleImages'
         self.image = pygame.transform.scale(
             pygame.image.load(self.base_image_dir + "/character/player1.png").convert_alpha(),
             (self.width, self.height))
@@ -86,6 +89,21 @@ class player_(object):
         self.width = 125
         self.msec_to_climb = 2
         self.image = self.original
+
+    def grayscale(self):
+        if self.base_image_dir == 'images':
+            self.base_image_dir = 'grayscaleImages'
+        else:
+            self.base_image_dir = 'images'
+        self.animation = [pygame.image.load(self.base_image_dir + "/animation/f1.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f2.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f3.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f4.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f5.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f6.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f7.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f8.png"),
+                          pygame.image.load(self.base_image_dir + "/animation/f9.png")]
 
     def choose_character(self, color_blind, p1, p2):
         if color_blind:
