@@ -1,12 +1,9 @@
-<<<<<<< Updated upstream
-=======
 ###########################
 #     Main - Playing      #
 ###########################
 import pygame
 import sys
 import math
-import random
 import time
 from src import player
 from src import main_menu
@@ -15,7 +12,7 @@ from src import obstacles
 selected_character = 1
 
 asdasd = 15
-
+base_image_dir = 'grayscaleImages'
 
 def main():
     # Initialize Game
@@ -59,11 +56,11 @@ def main():
     restart_area = pygame.Rect(50, 515, 180, 75)
     menu_area = pygame.Rect(50, 595, 180, 75)
 
-    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
-    fontTitle = pygame.font.Font("images/fonts/ALBAS.ttf", 100)
-    # logo = pygame.image.load("images/background/spaceForceLogo.png").convert_alpha()
-    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
-    button_sprite = pygame.transform.scale(pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha(), (230, 80))
+    fontPlayScreen = pygame.font.Font("fonts/ALBAS.ttf", 40)
+    fontTitle = pygame.font.Font("fonts/ALBAS.ttf", 100)
+    # logo = pygame.image.load(base_image_dir + "/background/spaceForceLogo.png").convert_alpha()
+    bkg = pygame.transform.scale(pygame.image.load(base_image_dir + "/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.transform.scale(pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(), (230, 80))
 
     start_ = fontPlayScreen.render("Start", True, (255, 255, 255))
     characters_ = fontPlayScreen.render("Characters", True, (255, 255, 255))
@@ -125,28 +122,28 @@ def main():
             pygame.display.update()
 
             mx, my = pygame.mouse.get_pos()
-            if start_area.collidepoint((mx, my)) and click:
+            if start_area.collidepoint(mx, my) and click:
                 mainMenu.tutorial(win, text_size_multiplier)
                 inmenu = False
                 playing = True
-            elif settings_area.collidepoint((mx, my)) and click:
+            elif settings_area.collidepoint(mx, my) and click:
                 if settings_split:
                     settings_split = False
                 else:
                     settings_split = True
-            elif settings_split and general_area.collidepoint((mx, my)) and click:
+            elif settings_split and general_area.collidepoint(mx, my) and click:
                 info_multiplier = general_settings(win, clock, music_multiplier, effect_multiplier)
                 music_multiplier = info_multiplier[0]
                 effect_multiplier = info_multiplier[1]
                 settings_split = False
-            elif settings_split and accessibility_area.collidepoint((mx, my)) and click:
+            elif settings_split and accessibility_area.collidepoint(mx, my) and click:
                 info_access = accessibility_settings(win, clock, text_size_multiplier, color_blind)
                 color_blind = info_access[0]
                 text_size_multiplier = info_access[1]
                 settings_split = False
-            elif characters_area.collidepoint((mx, my)) and click:
+            elif characters_area.collidepoint(mx, my) and click:
                 p1, p2 = character_select(win, clock, player1, color_blind)
-            elif quit_area.collidepoint((mx, my)) and click:
+            elif quit_area.collidepoint(mx, my) and click:
                 pygame.quit()
                 sys.exit()
             click = False
@@ -190,7 +187,7 @@ def main():
             '''
             Checks for collision and adds collision fx
             '''
-            if checkCollisions(player1, allObstacles):
+            if checkCollisions(player1, allObstacles) or int(player1.y) + 64 > HEIGHT or int(player1.y) < 64:
                 c_ = 0
                 explosion_sound.play()
                 time.sleep(.100)
@@ -221,20 +218,20 @@ def character_select(win, clock, player, color_blind):
     selected1 = True
     selected2 = False
 
-    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
+    fontPlayScreen = pygame.font.Font("fonts/ALBAS.ttf", 40)
 
-    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
-    button_sprite = pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha()
+    bkg = pygame.transform.scale(pygame.image.load(base_image_dir + "/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha()
     title_ = fontPlayScreen.render("Select Your Character", True, (255, 255, 255))
-    border = pygame.image.load("images/ui/selectborder.png").convert_alpha()
+    border = pygame.image.load(base_image_dir + "/ui/selectborder.png").convert_alpha()
     back_ = fontPlayScreen.render("Back", True, (255, 255, 255))
 
     if color_blind:
-        player1 = pygame.image.load("images/character/cb_player1.png").convert_alpha()
-        player2 = pygame.image.load("images/character/cb_player2.png").convert_alpha()
+        player1 = pygame.image.load(base_image_dir + "/character/cb_player1.png").convert_alpha()
+        player2 = pygame.image.load(base_image_dir + "/character/cb_player2.png").convert_alpha()
     else:
-        player1 = pygame.image.load("images/character/player1.png").convert_alpha()
-        player2 = pygame.image.load("images/character/player2.png").convert_alpha()
+        player1 = pygame.image.load(base_image_dir + "/character/player1.png").convert_alpha()
+        player2 = pygame.image.load(base_image_dir + "/character/player2.png").convert_alpha()
 
     back_area = pygame.Rect(50, 600, 180, 75)
     area1 = pygame.Rect(300, 200, 247, 267)
@@ -268,13 +265,13 @@ def character_select(win, clock, player, color_blind):
             win.blit(border, (650, 150))
 
         mx, my = pygame.mouse.get_pos()
-        if back_area.collidepoint((mx, my)) and click:
+        if back_area.collidepoint(mx, my) and click:
             running = False
-        elif area1.collidepoint((mx, my)) and click:
+        elif area1.collidepoint(mx, my) and click:
             selected1 = True
             selected2 = False
             player.choose_character(color_blind, selected1, selected2)
-        elif area2.collidepoint((mx, my)) and click:
+        elif area2.collidepoint(mx, my) and click:
             selected1 = False
             selected2 = True
             player.choose_character(color_blind, selected1, selected2)
@@ -288,12 +285,12 @@ def character_select(win, clock, player, color_blind):
 def general_settings(win, clock, music_multiplier, effect_multiplier):
     running = True
 
-    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
-    fontTitle = pygame.font.Font("images/fonts/ALBAS.ttf", 60)
+    fontPlayScreen = pygame.font.Font("fonts/ALBAS.ttf", 40)
+    fontTitle = pygame.font.Font("fonts/ALBAS.ttf", 60)
 
-    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
-    button_sprite = pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha()
-    option_button_sprite = pygame.transform.scale(pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha(),
+    bkg = pygame.transform.scale(pygame.image.load(base_image_dir + "/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha()
+    option_button_sprite = pygame.transform.scale(pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(),
                                                   (270, 100))
     options_ = fontTitle.render("General Options", True, (255, 255, 255))
     back_ = fontPlayScreen.render("Back", True, (255, 255, 255))
@@ -342,17 +339,17 @@ def general_settings(win, clock, music_multiplier, effect_multiplier):
             win.blit(off_, (230, 360))
 
         mx, my = pygame.mouse.get_pos()
-        if back_area.collidepoint((mx, my)) and click:
+        if back_area.collidepoint(mx, my) and click:
             running = False
-        elif music_area.collidepoint((mx, my)) and click:
+        elif music_area.collidepoint(mx, my) and click:
             music_multiplier = 1 - music_multiplier
             extra_info = True
-        elif effects_area.collidepoint((mx, my)) and click:
+        elif effects_area.collidepoint(mx, my) and click:
             effect_multiplier = 1 - effect_multiplier
             extra_info = True
         if extra_info:
             win.blit(
-                pygame.font.Font("images/fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu",
+                pygame.font.Font("fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu",
                                                                       True, (255, 255, 255)), (400, 460))
 
         click = False
@@ -367,12 +364,12 @@ def accessibility_settings(win, clock, text_size_multiplier, color_blind):
     running = True
     color_blind_mode_on = color_blind
 
-    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
+    fontPlayScreen = pygame.font.Font("fonts/ALBAS.ttf", 40)
 
-    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
-    button_sprite = pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha()
+    bkg = pygame.transform.scale(pygame.image.load(base_image_dir + "/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha()
     options_ = fontPlayScreen.render("Accessibility Options", True, (255, 255, 255))
-    option_button_sprite = pygame.transform.scale(pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha(),
+    option_button_sprite = pygame.transform.scale(pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(),
                                                   (300, 100))
     back_ = fontPlayScreen.render("Back", True, (255, 255, 255))
     toggle_color_blind_ = fontPlayScreen.render("Color Blind:", True, (255, 255, 255))
@@ -425,15 +422,15 @@ def accessibility_settings(win, clock, text_size_multiplier, color_blind):
             win.blit(large_, (250, 460))
 
         mx, my = pygame.mouse.get_pos()
-        if back_area.collidepoint((mx, my)) and click:
+        if back_area.collidepoint(mx, my) and click:
             running = False
-        elif color_blind_area.collidepoint((mx, my)) and click:
+        elif color_blind_area.collidepoint(mx, my) and click:
             if color_blind_mode_on == False:
                 color_blind_mode_on = True
             else:
                 color_blind_mode_on = False
             extra_info = True
-        elif text_size_area.collidepoint((mx, my)) and click:
+        elif text_size_area.collidepoint(mx, my) and click:
             if text_size_multiplier == 3:
                 text_size_multiplier = 1
             else:
@@ -442,7 +439,7 @@ def accessibility_settings(win, clock, text_size_multiplier, color_blind):
 
         if extra_info:
             win.blit(
-                pygame.font.Font("images/fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu",
+                pygame.font.Font("fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu",
                                                                       True, (255, 255, 255)), (400, 460))
 
         click = False
@@ -475,8 +472,9 @@ def createObstacles(color_blind):
 
     return allRocks
 
+
 def gameOver():
-    
+    pass
 
 
 def checkCollisions(player, rocks):
@@ -492,4 +490,3 @@ def checkCollisions(player, rocks):
 
 
 main()
->>>>>>> Stashed changes
