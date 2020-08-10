@@ -14,6 +14,9 @@ selected_character = 1
 
 asdasd = 15
 
+click_sound = pygame.mixer.Sound("sound/click2.wav")
+click_sound.set_volume(0.1)
+
 def main():
     # Initialize Game
     pygame.init()
@@ -38,6 +41,8 @@ def main():
     music_multiplier = 1
     effect_multiplier = 1
     text_size_multiplier = 2
+    how_to_multiplier = 3
+
 
     music = pygame.mixer.music.load("sound/song.mp3")
     explosion_sound = pygame.mixer.Sound("sound/explosion.wav")
@@ -56,9 +61,11 @@ def main():
     quit_area = pygame.Rect(50,595, 180, 75)
     restart_area = pygame.Rect(50,515, 180, 75)
     menu_area = pygame.Rect(50,595, 180, 75)
+    credits_area = pygame.Rect(1000,595, 180, 75)
     
     fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
     fontTitle = pygame.font.Font("images/fonts/ALBAS.ttf", 100)
+    
     # logo = pygame.image.load("images/background/spaceForceLogo.png").convert_alpha()
     bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
     button_sprite = pygame.transform.scale(pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha(), (230,80))
@@ -72,6 +79,9 @@ def main():
     restart_ = fontPlayScreen.render("Restart", True, (255,255,255))
     menu_ = fontPlayScreen.render("Main Menu", True, (255,255,255))
     logo_ = fontTitle.render("Space Force", True, (255,255,255))
+    credits_ = fontPlayScreen.render("Credits", True, (255,255,255))
+
+    
     
     click = False
 
@@ -80,7 +90,19 @@ def main():
 
     gaming = True
 
+    movingPlayer = player.player_()
+    movingPlayerSpeed = -0.5
+
+
     while gaming:
+
+        fontHowTo = pygame.font.Font("images/fonts/ALBAS.ttf", 10 * how_to_multiplier)
+        howto_ = fontHowTo.render("How to Play!", True, (255,255,255))
+        space_ = fontHowTo.render("Press [Space] to jump and avoid obstacles.", True, (255,255,255))
+
+        movingPlayer.image = player1.original
+        movingPlayer.x = 600
+        movingPlayer.y = 550
 
         clock = pygame.time.Clock()
         img_x = 0
@@ -112,8 +134,19 @@ def main():
             win.blit(characters_, (60, 440))
             win.blit(button_sprite, (50,515))
             win.blit(settings_, (60, 520))
+            win.blit(button_sprite, (1000,595))
+            win.blit(credits_, (1050, 600))            
             win.blit(button_sprite, (50,595))
             win.blit(quit_game_, (60, 600))
+            win.blit(howto_, (600, 355))
+            win.blit(space_, (400, 415))
+
+            movingPlayer.y += movingPlayerSpeed
+            if movingPlayer.y > 580:
+                movingPlayerSpeed = -0.5
+            elif movingPlayer.y < 500:
+                movingPlayerSpeed = 0.5
+            win.blit(movingPlayer.image, (movingPlayer.x, movingPlayer.y))
 
             
             if settings_split:
@@ -126,27 +159,45 @@ def main():
                 
             mx, my = pygame.mouse.get_pos()
             if start_area.collidepoint((mx,my)) and click:
+                click_sound.play()
                 mainMenu.tutorial(win, text_size_multiplier)
                 inmenu = False
                 playing = True
             elif settings_area.collidepoint((mx,my)) and click:
+                click_sound.play()
                 if settings_split:
                     settings_split = False
                 else:
                     settings_split = True
             elif settings_split and general_area.collidepoint((mx,my)) and click:
+                click_sound.play()
                 info_multiplier = general_settings(win,clock, music_multiplier, effect_multiplier)     
                 music_multiplier = info_multiplier[0]
                 effect_multiplier = info_multiplier[1]
                 settings_split = False
-            elif settings_split and accessibility_area.collidepoint((mx,my)) and click:    
+                click_sound.set_volume(0.10 * effect_multiplier)
+            elif settings_split and accessibility_area.collidepoint((mx,my)) and click:
+                click_sound.play()    
                 info_access = accessibility_settings(win,clock,text_size_multiplier,color_blind)
                 color_blind = info_access[0]
                 text_size_multiplier = info_access[1]
+                how_to_multiplier = text_size_multiplier + 1
+                fontHowTo = pygame.font.Font("images/fonts/ALBAS.ttf", 10 * how_to_multiplier)
+                howto_ = fontHowTo.render("How to Play!", True, (255,255,255))
+                space_ = fontHowTo.render("Press [Space] to jump and avoid obstacles.", True, (255,255,255))
                 settings_split = False
+                player1.choose_character(color_blind, p1,p2)
+                movingPlayer.image = player1.original
             elif characters_area.collidepoint((mx,my)) and click:
+                click_sound.play()
                 p1, p2= character_select(win,clock,player1,color_blind)
+                player1.choose_character(color_blind, p1,p2)
+                movingPlayer.image = player1.original
+            elif credits_area.collidepoint((mx,my)) and click:
+                click_sound.play()
+                credits(win,clock)
             elif quit_area.collidepoint((mx,my)) and click:
+                click_sound.play()
                 pygame.quit()
                 sys.exit()
             click = False
@@ -154,9 +205,9 @@ def main():
         jump_sound.set_volume(0.40 * effect_multiplier)
         point_sound.set_volume(0.50 * effect_multiplier)
         explosion_sound.set_volume(0.20 * effect_multiplier)
+        
 
         allObstacles = createObstacles(color_blind)
-        player1.choose_character(color_blind, p1,p2)
         while playing:
             clock.tick(FPS)
             for event in pygame.event.get():
@@ -190,7 +241,7 @@ def main():
             '''
             Checks for collision and adds collision fx
             '''
-            if checkCollisions(player1, allObstacles):
+            if checkCollisions(player1, allObstacles) or (int(player1.y) + 64 > HEIGHT or int(player1.y) < -64):
                 c_ = 0
                 explosion_sound.play()
                 time.sleep(.100)
@@ -208,7 +259,7 @@ def main():
                 win.blit(menu_, (60, 600))
                 mainMenu.score(win, score, text_size_multiplier)
                 mainMenu.high_score(win, text_size_multiplier)
-                results = mainMenu.game_over(win, restart_area, menu_area, text_size_multiplier)
+                results = mainMenu.game_over(win, restart_area, menu_area, text_size_multiplier,click_sound)
                 playing = results[0]
                 inmenu = results[1]
                 player1.player_restart()
@@ -269,13 +320,16 @@ def character_select(win,clock,player,color_blind):
         mx, my = pygame.mouse.get_pos()
         if back_area.collidepoint((mx,my)) and click:
             running = False
+            click_sound.play()
         elif area1.collidepoint((mx,my)) and click:
             selected1 = True
             selected2 = False
+            click_sound.play()
             player.choose_character(color_blind, selected1, selected2)
         elif area2.collidepoint((mx,my)) and click:            
             selected1 = False
             selected2 = True
+            click_sound.play()
             player.choose_character(color_blind, selected1, selected2)
         click = False
         
@@ -339,11 +393,14 @@ def general_settings(win,clock, music_multiplier, effect_multiplier):
 
         mx, my = pygame.mouse.get_pos()
         if back_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             running = False
         elif music_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             music_multiplier = 1 - music_multiplier
             extra_info = True
         elif effects_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             effect_multiplier = 1 - effect_multiplier
             extra_info = True
         if extra_info:
@@ -354,7 +411,7 @@ def general_settings(win,clock, music_multiplier, effect_multiplier):
         pygame.display.update()
         clock.tick(60)
     
-    return [music_multiplier, effect_multiplier]
+    return [music_multiplier, effect_multiplier]  
 
 def accessibility_settings(win,clock, text_size_multiplier, color_blind):
     running = True
@@ -419,14 +476,17 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind):
         
         mx, my = pygame.mouse.get_pos()
         if back_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             running = False
         elif color_blind_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             if color_blind_mode_on == False:
                 color_blind_mode_on = True
             else:
                 color_blind_mode_on = False
             extra_info = True
         elif text_size_area.collidepoint((mx,my)) and click:
+            click_sound.play()
             if text_size_multiplier == 3:
                 text_size_multiplier = 1
             else:
@@ -441,6 +501,82 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind):
         pygame.display.update()
         clock.tick(60)
     return [color_blind_mode_on, text_size_multiplier]
+
+def credits(win,clock):
+    running = True    
+    
+    fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
+    fontTitle = pygame.font.Font("images/fonts/ALBAS.ttf", 60)
+    
+    bkg = pygame.transform.scale(pygame.image.load("images/background/main_back.png").convert_alpha(), (2713, 720))
+    button_sprite = pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha()
+    option_button_sprite = pygame.transform.scale(pygame.image.load("images/ui/OrangeBtn1.png").convert_alpha(), (270,100))
+    options_ = fontTitle.render("Credits", True, (255,255,255))
+    back_ = fontPlayScreen.render("Back", True, (255,255,255))
+    
+    dev_names_ = fontPlayScreen.render("Made by:", True, (255,255,255))
+    ykoz_ = fontPlayScreen.render("Yegor Kozhevnikov", True, (255,255,255))
+    dmuf_ = fontPlayScreen.render("Daniyal Mufti", True, (255,255,255))
+    htan_ = fontPlayScreen.render("Himanshu Tanwar", True, (255,255,255))
+    jjaz_ = fontPlayScreen.render("Jaka Jazbec", True, (255,255,255))
+    jalc_ = fontPlayScreen.render("Jonathan Alcantara", True, (255,255,255))
+    kgal_ = fontPlayScreen.render("Keith Gallimore", True, (255,255,255))
+    
+    music_cred_ = fontPlayScreen.render("Music:", True, (255,255,255))
+    music_name_ = fontPlayScreen.render("Pirate Man Gets Quarantined", True, (255,255,255))
+    music_artist_ = fontPlayScreen.render("by RRThiel", True, (255,255,255))
+    
+    image_cred_ = fontPlayScreen.render("Image Assets:", True, (255,255,255))
+    image_name_ = fontPlayScreen.render("Space Adventures", True, (255,255,255))
+    image_maker_ = fontPlayScreen.render("by CraftPix.net", True, (255,255,255))
+    
+    back_area = pygame.Rect(50,600, 180, 75)
+    
+    click = False
+    
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN :
+                if event.button == 1:
+                    click = True
+        
+        win.fill((0,0,0))
+        win.blit(bkg, (0,0))
+        win.blit(options_, (60, 50))
+        
+        win.blit(dev_names_, (60, 200))
+        win.blit(jalc_, (80, 250))
+        win.blit(kgal_, (80, 300))
+        win.blit(jjaz_, (80, 350))
+        win.blit(ykoz_, (80, 400))
+        win.blit(dmuf_, (80, 450))
+        win.blit(htan_, (80, 500))        
+        
+        win.blit(music_cred_, (660, 200))
+        win.blit(music_name_, (680, 250))
+        win.blit(music_artist_, (680, 300))
+        
+        win.blit(image_cred_, (660, 400))
+        win.blit(image_name_, (680, 450))
+        win.blit(image_maker_, (680, 500)) 
+        
+        win.blit(button_sprite, (50,600))
+        win.blit(back_, (60, 605))
+
+        mx, my = pygame.mouse.get_pos()
+        if back_area.collidepoint((mx,my)) and click:
+            click_sound.play()
+            running = False
+        
+        click = False
+        
+        pygame.display.update()
+        clock.tick(60)
+  
 
 def createObstacles(color_blind):
     '''
