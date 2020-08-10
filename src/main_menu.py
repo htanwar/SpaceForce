@@ -36,7 +36,7 @@ class mainMenu(object):
             pygame.display.update()
       
     
-    def game_over(self, win, restart, menu, scale):
+    def game_over(self, win, restart, menu, scale, click_sound):
         '''
         Shows the gameover screen
 
@@ -59,8 +59,10 @@ class mainMenu(object):
             pygame.display.update()
 
             if restart.collidepoint((mx,my)) and click:
+                click_sound.play()
                 return (True, False)
             if menu.collidepoint((mx,my)) and click:
+                click_sound.play()
                 return (False, True)
             
     
