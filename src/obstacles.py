@@ -9,16 +9,21 @@ import os
 
 class obstacles(object):
     def __init__(self):
+        self.base_image_dir = 'images'
         self.x1 = 1280
         self.x2 = 1280
         self.y1 = -100
         self.y2 = 520
         self.width = 200
         self.height = 200
-        self.rock1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
-        self.rock2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
-        self.orig1 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
-        self.orig2 = pygame.transform.scale(pygame.image.load("images/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.rock1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.rock2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
 
     def display_object(self, win):
         '''
@@ -59,11 +64,41 @@ class obstacles(object):
         #self.rock1 = pygame.transform.scale(self.orig1, (sizeR, sizeR))
         #self.rock2 = pygame.transform.scale(self.orig2, (sizeR, sizeR))
     
+    def grayscale(self):
+        self.base_image_dir = 'grayscaleImages'
+        self.rock1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.rock2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+
+    def regular(self):
+        self.base_image_dir = 'images'
+        self.rock1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.rock2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+        self.orig2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/rock11.png").convert_alpha(), (self.width, self.height))
+
     def cb_mode(self):
-        self.rock1 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
-        self.rock2 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
-        self.orig1 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
-        self.orig2 = pygame.transform.scale(pygame.image.load("images/obstacles/cb_rock1.png").convert_alpha(), (self.width, self.height))
+        self.rock1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/cb_rock1.png").convert_alpha(),
+            (self.width, self.height))
+        self.rock2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/cb_rock1.png").convert_alpha(),
+            (self.width, self.height))
+        self.orig1 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/cb_rock1.png").convert_alpha(),
+            (self.width, self.height))
+        self.orig2 = pygame.transform.scale(
+            pygame.image.load(self.base_image_dir + "/obstacles/cb_rock1.png").convert_alpha(),
+            (self.width, self.height))
 
     
 

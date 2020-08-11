@@ -1,0 +1,3 @@
+High Score: 0
+Attempts: 4
+Total Time: 45
