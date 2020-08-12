@@ -10,7 +10,6 @@ from src import player
 from src import main_menu
 from src import obstacles
 
-
 pygame.init()
 selected_character = 1
 base_image_dir = 'images'
@@ -185,7 +184,7 @@ def main():
                 click_sound.set_volume(0.10 * effect_multiplier)
             elif settings_split and accessibility_area.collidepoint((mx,my)) and click:
                 click_sound.play()    
-                info_access = accessibility_settings(win,clock,text_size_multiplier,color_blind,f)
+                info_access = accessibility_settings(win,clock,text_size_multiplier,color_blind,f,grayscaleBool)
                 color_blind = info_access[0]
                 text_size_multiplier = info_access[1]
                 grayscaleBool = info_access[2]
@@ -221,7 +220,7 @@ def main():
 
             elif characters_area.collidepoint((mx,my)) and click:
                 click_sound.play()
-                p1, p2= character_select(win,clock,player1,color_blind,f)
+                p1, p2= character_select(win,clock,player1,color_blind,f,p1,p2)
                 player1.choose_character(color_blind, p1,p2)
                 movingPlayer.image = player1.original
             elif credits_area.collidepoint((mx,my)) and click:
@@ -304,11 +303,11 @@ def main():
 
     
 
-def character_select(win,clock,player,color_blind,f):
+def character_select(win,clock,player,color_blind,f,p1,p2):
     running = True
     
-    selected1 = True
-    selected2 = False
+    selected1 = p1
+    selected2 = p2
         
     fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
     
@@ -390,6 +389,9 @@ def general_settings(win,clock, music_multiplier, effect_multiplier,f):
     back_ = fontPlayScreen.render("Back", True, (255,255,255))
     toggle_music_ = fontPlayScreen.render("Music:", True, (255,255,255))
     toggle_effects_ = fontPlayScreen.render("Effect:", True, (255,255,255))
+    default_options_ = fontPlayScreen.render("Default Settings", True, (255,255,255))
+    default_button_sprite = pygame.transform.scale(pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(), (330, 100))
+    
     
     on_ = fontPlayScreen.render("ON", True, (255,255,255))
     off_ = fontPlayScreen.render("OFF", True, (255,255,255))
@@ -397,6 +399,7 @@ def general_settings(win,clock, music_multiplier, effect_multiplier,f):
     music_area = pygame.Rect(50,250, 270, 100)
     effects_area = pygame.Rect(50,350, 270, 100)
     back_area = pygame.Rect(50,600, 180, 75)
+    default_area = pygame.Rect(1000, 595, 300, 75)
     
     click = False
     
@@ -422,6 +425,8 @@ def general_settings(win,clock, music_multiplier, effect_multiplier,f):
         win.blit(toggle_effects_, (60,360))
         win.blit(button_sprite, (50,600))
         win.blit(back_, (60, 605))
+        win.blit(default_button_sprite, (940,595))
+        win.blit(default_options_, (950,605))
         
         if music_multiplier == 1:
             win.blit(on_, (230,260))    
@@ -445,6 +450,11 @@ def general_settings(win,clock, music_multiplier, effect_multiplier,f):
             click_sound.play()
             effect_multiplier = 1 - effect_multiplier
             extra_info = True
+        elif default_area.collidepoint((mx,my)) and click:
+            click_sound.play()
+            music_multiplier = 1
+            effect_multiplier = 1
+
         if extra_info:
             win.blit(pygame.font.Font("images/fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu", True, (255,255,255)), (400,460))
         
@@ -455,11 +465,17 @@ def general_settings(win,clock, music_multiplier, effect_multiplier,f):
     
     return [music_multiplier, effect_multiplier]  
 
-def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
+def accessibility_settings(win,clock, text_size_multiplier, color_blind,f, grayScale):
     running = True
-    color_blind_mode_on = False
-    gray_scale_mode = False
-    access = 1
+    if color_blind:
+        access = 2
+    elif grayScale:
+        access = 3
+    else:
+        access = 1
+    
+    color_blind_mode_on = color_blind
+    gray_scale_mode = grayScale
     
     fontPlayScreen = pygame.font.Font("images/fonts/ALBAS.ttf", 40)
     
@@ -470,6 +486,8 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
     back_ = fontPlayScreen.render("Back", True, (255,255,255))
     toggle_color_blind_ = fontPlayScreen.render("Color Blind:", True, (255,255,255))
     toggle_font_size_ = fontPlayScreen.render("Text Size:", True, (255,255,255))
+    default_options_ = fontPlayScreen.render("Default Settings", True, (255,255,255))
+    default_button_sprite = pygame.transform.scale(pygame.image.load(base_image_dir + "/ui/OrangeBtn1.png").convert_alpha(), (330, 100))
     
     on_ = fontPlayScreen.render("ON", True, (255,255,255))
     off_ = fontPlayScreen.render("OFF", True, (255,255,255))
@@ -482,6 +500,7 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
     back_area = pygame.Rect(50,600, 180, 75)
     color_blind_area = pygame.Rect(50,250, 410, 100)
     text_size_area = pygame.Rect(50,350, 410, 100)
+    default_area = pygame.Rect(1000, 595, 300, 75)
     
     click = False
 
@@ -507,6 +526,8 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
         win.blit(toggle_color_blind_, (60,260))
         win.blit(option_button_sprite, (50,350)) 
         win.blit(toggle_font_size_, (60,360))
+        win.blit(default_button_sprite, (940,595))
+        win.blit(default_options_, (950,605))
 
         if access == 1:
             win.blit(off_, (265,260)) 
@@ -542,8 +563,6 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
             else:
                 color_blind_mode_on = False
                 gray_scale_mode = False
-
-            
             extra_info = True
         elif text_size_area.collidepoint((mx,my)) and click:
             click_sound.play()
@@ -552,6 +571,12 @@ def accessibility_settings(win,clock, text_size_multiplier, color_blind,f):
             else:
                 text_size_multiplier+=1
             extra_info = True
+        elif default_area.collidepoint((mx,my)) and click:
+            click_sound.play()
+            text_size_multiplier = 2
+            access = 1
+            color_blind_mode_on = False
+            gray_scale_mode = False
             
         if extra_info:
             win.blit(pygame.font.Font("images/fonts/ALBAS.ttf", 30).render("Effects take place only after leaving this menu", True, (255,255,255)), (500,460))
